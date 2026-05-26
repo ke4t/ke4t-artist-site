@@ -1,6 +1,6 @@
-# JAK4RTA CITY - Official Artist Site
+# Si Si - Official Artist Site
 
-A modern, minimalistic music artist website for JAK4RTA CITY.
+A modern, minimalistic music artist website for Si Si.
 
 ## Features
 - **Native Audio Player:** Custom-built interactive tracklist and global persistent player.
