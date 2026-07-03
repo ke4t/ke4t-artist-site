@@ -1685,3 +1685,79 @@ h4,
   transform: scale(1.1);
   opacity: 0;
 }
+/*=============================================
+  14. CUSTOM SINGLE PLAYER
+=============================================*/
+.custom-player-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.visualizer-wrapper {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#spectrum-visualizer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.main-play-btn {
+  position: relative;
+  z-index: 2;
+  background: var(--accent);
+  color: var(--color-black);
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.main-play-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(241, 195, 56, 0.5);
+}
+
+.single-track-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.single-track-info .track-name {
+  flex-grow: 1;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+}
+
+.single-track-info .track-time {
+  color: var(--text-muted);
+}

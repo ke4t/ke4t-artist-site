@@ -167,16 +167,15 @@ document.addEventListener('DOMContentLoaded', () => {
       CUSTOM AUDIO PLAYER
     =====================================================*/
     const audioPlayer = document.getElementById('audio-player');
-    const tracks = document.querySelectorAll('.play-track');
-    let currentTrack = null;
+    const mainPlayBtn = document.getElementById('main-play-btn');
+    const visualizerCanvas = document.getElementById('spectrum-visualizer');
+    const singleTrackTime = document.getElementById('single-track-time');
 
     // Global Player DOM Elements
     const globalPlayerUI = document.getElementById('global-player');
     const gpBtnClose = document.getElementById('close-player-btn');
     const gpTitle = document.getElementById('player-track-name');
     const gpBtnPlayPause = document.getElementById('player-play-pause');
-    const gpBtnPrev = document.getElementById('player-prev');
-    const gpBtnNext = document.getElementById('player-next');
     const gpTimeCurrent = document.getElementById('player-time-current');
     const gpTimeTotal = document.getElementById('player-time-total');
     const gpProgressBg = document.getElementById('player-progress-bg');
@@ -191,21 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
         audioPlayer.volume = 0.5;
     }
 
-    // Equalizer HTML template
-    const equalizerHTML = `
-        <div class="playing-bars">
-            <span></span><span></span><span></span>
-        </div>
-    `;
-
-    function updatePlayPauseIcon(isPlaying) {
-        if (isPlaying) {
-            gpBtnPlayPause.innerHTML = '<i class="fa-solid fa-pause"></i>';
-        } else {
-            gpBtnPlayPause.innerHTML = '<i class="fa-solid fa-play"></i>';
-        }
-    }
-
     function formatTime(seconds) {
         if (isNaN(seconds)) return "0:00";
         const min = Math.floor(seconds / 60);
@@ -213,72 +197,124 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${min}:${sec.toString().padStart(2, '0')}`;
     }
 
-    function playTrack(trackElement) {
-        if (!audioPlayer) return;
-        const src = trackElement.getAttribute('data-src');
-        if (!src) return;
+    let audioCtx, analyser, source, dataArray, bufferLength;
+    let isAudioInitialized = false;
 
-        // Slide up the global player on first use
-        if (!globalPlayerUI.classList.contains('show')) {
-            globalPlayerUI.classList.add('show');
-        }
+    function initAudioVisualizer() {
+        if (isAudioInitialized) return;
+        isAudioInitialized = true;
+        
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+        
+        source = audioCtx.createMediaElementSource(audioPlayer);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        
+        bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+        
+        drawVisualizer();
+    }
 
-        // Make sure to remove old active states
-        tracks.forEach(t => t.classList.remove('active-track', 'is-playing'));
-        const existingEqs = document.querySelectorAll('.playing-bars');
-        existingEqs.forEach(eq => eq.remove());
-
-        // If clicking the same track
-        if (currentTrack === trackElement) {
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-                trackElement.classList.add('active-track', 'is-playing');
-                trackElement.insertAdjacentHTML('beforeend', equalizerHTML);
-                updatePlayPauseIcon(true);
+    function drawVisualizer() {
+        if (!visualizerCanvas) return;
+        requestAnimationFrame(drawVisualizer);
+        
+        const canvasCtx = visualizerCanvas.getContext('2d');
+        const width = visualizerCanvas.width = visualizerCanvas.clientWidth;
+        const height = visualizerCanvas.height = visualizerCanvas.clientHeight;
+        
+        analyser.getByteFrequencyData(dataArray);
+        
+        canvasCtx.clearRect(0, 0, width, height);
+        
+        const sliceWidth = width / bufferLength;
+        const time = Date.now() / 1000;
+        
+        canvasCtx.beginPath();
+        canvasCtx.moveTo(0, height);
+        
+        let x = 0;
+        for(let i = 0; i < bufferLength; i++) {
+            let v = Math.pow(dataArray[i] / 255.0, 1.2);
+            // Idle animation if no audio playing
+            if (audioPlayer.paused || v === 0) {
+                v = (Math.sin(time * 2 + i * 0.1) * 0.05) + 0.05; 
+            }
+            
+            let y = height - (v * height * 0.85); 
+            
+            if(i === 0) {
+                canvasCtx.moveTo(x, y);
             } else {
-                audioPlayer.pause();
-                trackElement.classList.add('active-track'); // keep it highlighted but paused
-                trackElement.insertAdjacentHTML('beforeend', equalizerHTML);
-                updatePlayPauseIcon(false);
+                canvasCtx.lineTo(x, y);
             }
-            return;
+            x += sliceWidth;
+        }
+        canvasCtx.lineTo(width, height);
+        canvasCtx.lineTo(0, height);
+        canvasCtx.closePath();
+
+        const gradient = canvasCtx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, 'rgba(241, 195, 56, 0.6)');
+        gradient.addColorStop(1, 'rgba(241, 195, 56, 0.0)');
+        canvasCtx.fillStyle = gradient;
+        canvasCtx.fill();
+
+        canvasCtx.beginPath();
+        x = 0;
+        for(let i = 0; i < bufferLength; i++) {
+            let v = Math.pow(dataArray[i] / 255.0, 1.2);
+            if (audioPlayer.paused || v === 0) {
+                v = (Math.sin(time * 2 + i * 0.1) * 0.05) + 0.05; 
+            }
+            let y = height - (v * height * 0.85);
+            if(i === 0) {
+                canvasCtx.moveTo(x, y);
+            } else {
+                canvasCtx.lineTo(x, y);
+            }
+            x += sliceWidth;
+        }
+        canvasCtx.lineWidth = 2;
+        canvasCtx.strokeStyle = 'rgb(241, 195, 56)';
+        canvasCtx.shadowBlur = 20;
+        canvasCtx.shadowColor = 'rgba(241, 195, 56, 1)';
+        canvasCtx.stroke();
+        
+        canvasCtx.shadowBlur = 0;
+    }
+
+    function togglePlay() {
+        if (!audioPlayer.src) return;
+        
+        initAudioVisualizer();
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
         }
 
-        // Clicked a new track
-        currentTrack = trackElement;
-
-        // Update Title in Global Player
-        const trackNameNode = trackElement.querySelector('.track-name');
-        if (trackNameNode) gpTitle.textContent = trackNameNode.textContent;
-
-        currentTrack.classList.add('active-track');
-        currentTrack.insertAdjacentHTML('beforeend', equalizerHTML);
-
-        audioPlayer.src = src;
-        audioPlayer.play().then(() => {
-            currentTrack.classList.add('is-playing');
+        if (audioPlayer.paused) {
+            audioPlayer.play();
             updatePlayPauseIcon(true);
-        }).catch(err => {
-            console.error("Audio playback failed:", err);
-            updatePlayPauseIcon(false);
-        });
-    }
-
-    // Attach click to tracklist items
-    tracks.forEach(track => {
-        track.addEventListener('click', () => playTrack(track));
-    });
-
-    // Global Player Controls
-    if (gpBtnPlayPause) {
-        gpBtnPlayPause.addEventListener('click', () => {
-            if (currentTrack) {
-                playTrack(currentTrack); // This toggles if it's the same track
-            } else if (tracks.length > 0) {
-                playTrack(tracks[0]);
+            if (!globalPlayerUI.classList.contains('show')) {
+                globalPlayerUI.classList.add('show');
             }
-        });
+        } else {
+            audioPlayer.pause();
+            updatePlayPauseIcon(false);
+        }
     }
+
+    function updatePlayPauseIcon(isPlaying) {
+        const iconHtml = isPlaying ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>';
+        if (gpBtnPlayPause) gpBtnPlayPause.innerHTML = iconHtml;
+        if (mainPlayBtn) mainPlayBtn.innerHTML = iconHtml;
+    }
+
+    if (mainPlayBtn) mainPlayBtn.addEventListener('click', togglePlay);
+    if (gpBtnPlayPause) gpBtnPlayPause.addEventListener('click', togglePlay);
 
     if (gpBtnClose) {
         gpBtnClose.addEventListener('click', () => {
@@ -287,30 +323,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 audioPlayer.currentTime = 0;
             }
             globalPlayerUI.classList.remove('show');
-            tracks.forEach(t => t.classList.remove('active-track', 'is-playing'));
-            const existingEqs = document.querySelectorAll('.playing-bars');
-            existingEqs.forEach(eq => eq.remove());
-            currentTrack = null;
             updatePlayPauseIcon(false);
         });
     }
-
-    function playAdjacentTrack(direction) {
-        if (!currentTrack) return;
-        let index = Array.from(tracks).indexOf(currentTrack);
-
-        if (direction === 'next') {
-            index = (index + 1) % tracks.length;
-        } else if (direction === 'prev') {
-            index = (index - 1 + tracks.length) % tracks.length;
-        }
-
-        currentTrack = null;
-        playTrack(tracks[index]);
-    }
-
-    if (gpBtnNext) gpBtnNext.addEventListener('click', () => playAdjacentTrack('next'));
-    if (gpBtnPrev) gpBtnPrev.addEventListener('click', () => playAdjacentTrack('prev'));
 
     let isDraggingProgress = false;
     let dragPos = 0;
@@ -322,6 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
                 gpProgressFill.style.width = `${percent}%`;
                 gpTimeCurrent.textContent = formatTime(audioPlayer.currentTime);
+                if (singleTrackTime) singleTrackTime.textContent = formatTime(audioPlayer.currentTime);
             }
         });
 

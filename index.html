@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KE4T</title>
     <meta name="description"
-        content="Official website for Si Si. Listen to the latest releases, view tour dates, and shop official merchandise.">
+        content="Official website for On My Job. Listen to the latest releases, view tour dates, and shop official merchandise.">
 
     <!-- Google Fonts: Space Grotesk for Display, Inter for Body, Space Mono for details -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -93,10 +93,8 @@
             <div class="container hero-content">
                 <div class="hero-text animate-on-load">
                     <h2 class="hero-subtitle">[ NEW RELEASE ]</h2>
-                    <h1 class="hero-title hover-stroke-fill">Si Si</h1>
-                    <div class="asian-chars">
-                        <span>四四.</span>
-                    </div>
+                    <h1 class="hero-title hover-stroke-fill">On My Job</h1>
+                    
                 </div>
 
                 <div class="hero-actions animate-on-load delay-1">
@@ -119,96 +117,30 @@
 
                 <div class="music-grid reveal-up delay-1">
                     <div class="album-art-container">
-                        <img src="album-art.jpg" alt="Si Si Cover Art" class="album-art hover-tilt">
+                        <img src="on my job - cover.png" alt="On My Job Cover Art" class="album-art hover-tilt">
                     </div>
 
                     <div class="album-info">
-                        <div class="tracklist">
-                            <div class="track play-track" data-src="mp3/sure-enough.mp3">
+                        <div class="custom-player-container">
+                            <div class="visualizer-wrapper">
+                                <canvas id="spectrum-visualizer"></canvas>
+                                <button id="main-play-btn" class="main-play-btn"><i class="fa-solid fa-play"></i></button>
+                            </div>
+                            <div class="single-track-info">
                                 <span class="track-num">01.</span>
-                                <span class="track-name">SURE ENOUGH</span>
-                                <span class="track-time">2:12</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/rapport.wav">
-                                <span class="track-num">02.</span>
-                                <span class="track-name">RAPPORT</span>
-                                <span class="track-time">1:54</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/cycle.wav">
-                                <span class="track-num">03.</span>
-                                <span class="track-name">CYCLE</span>
-                                <span class="track-time">2:03</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/my-luv.mp3">
-                                <span class="track-num">04.</span>
-                                <span class="track-name">MY LUV</span>
-                                <span class="track-time">2:53</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/daze.wav">
-                                <span class="track-num">05.</span>
-                                <span class="track-name">DAZE</span>
-                                <span class="track-time">1:45</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/feel-it.wav">
-                                <span class="track-num">06.</span>
-                                <span class="track-name">FEEL IT</span>
-                                <span class="track-time">1:59</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/how-you-feelin.mp3">
-                                <span class="track-num">07.</span>
-                                <span class="track-name">HOW YOU FEELIN</span>
-                                <span class="track-time">3:12</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/ohh.wav">
-                                <span class="track-num">08.</span>
-                                <span class="track-name">OHH</span>
-                                <span class="track-time">1:45</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/outta-reach.mp3">
-                                <span class="track-num">09.</span>
-                                <span class="track-name">OUTTA REACH</span>
-                                <span class="track-time">1:49</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/real-heartbreaker.mp3">
-                                <span class="track-num">10.</span>
-                                <span class="track-name">REAL HEARTBREAKER</span>
-                                <span class="track-time">2:10</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/rubberband.mp3">
-                                <span class="track-num">11.</span>
-                                <span class="track-name">RUBBERBAND</span>
-                                <span class="track-time">1:56</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/sticky-notes.mp3">
-                                <span class="track-num">12.</span>
-                                <span class="track-name">STICKY NOTES</span>
-                                <span class="track-time">2:00</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/tweakin.mp3">
-                                <span class="track-num">13.</span>
-                                <span class="track-name">TWEAKIN</span>
-                                <span class="track-time">1:51</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/something-about-her.mp3">
-                                <span class="track-num">14.</span>
-                                <span class="track-name">SOMETHING ABOUT HER</span>
-                                <span class="track-time">2:25</span>
-                            </div>
-                            <div class="track play-track" data-src="mp3/starstruck.wav">
-                                <span class="track-num">15.</span>
-                                <span class="track-name">STARSTRUCK</span>
-                                <span class="track-time">1:59</span>
+                                <span class="track-name">ON MY JOB</span>
+                                <span class="track-time" id="single-track-time">--:--</span>
                             </div>
                         </div>
 
                         <!-- Hidden Native Audio Player -->
-                        <audio id="audio-player"></audio>
+                        <audio id="audio-player" src="on-my-job.mp3"></audio>
 
                         <div class="streaming-links">
-                            <a href="https://open.spotify.com/album/1HgpBfL9C3fu3eEBjrBfwU?si=XtqmWxjKS1itPjDtphclXw"
+                            <a href="https://open.spotify.com/track/4sywukjnK5uCe1YAxNFS9N?si=c01e0787923b413a"
                                 target="_blank" rel="noopener noreferrer" class="stream-btn spotify">Spotify <span
                                     class="arrow">→</span></a>
-                            <a href="https://music.apple.com/gb/album/si-si/1764654922" target="_blank"
+                            <a href="https://music.apple.com/gb/song/on-my-job/6763016663" target="_blank"
                                 rel="noopener noreferrer" class="stream-btn apple">Apple Music <span
                                     class="arrow">→</span></a>
                         </div>
@@ -219,21 +151,21 @@
             <!-- Marquee Divider -->
             <div class="marquee-container">
                 <div class="marquee">
-                    <span>Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
+                    <span>On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
                         &nbsp;</span>
-                    <span>Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
-                        Si Si — OUT NOW — LISTEN EVERYWHERE — Si Si — OUT NOW — LISTEN EVERYWHERE —
+                    <span>On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
+                        On My Job — OUT NOW — LISTEN EVERYWHERE — On My Job — OUT NOW — LISTEN EVERYWHERE —
                         &nbsp;</span>
                 </div>
             </div>
@@ -299,7 +231,7 @@
         <div class="footer-bottom">
             <div class="container flex-between">
                 <p>&copy; 2026 KE4T. ALL RIGHTS RESERVED.</p>
-                <div class="sys-info">#sisi // 四四</div>
+                <div class="sys-info">#onmyjob</div>
             </div>
         </div>
     </footer>
@@ -310,7 +242,7 @@
         <div class="container global-player-content">
             <div class="player-info">
                 <span id="player-track-name" class="player-title">--</span>
-                <span class="player-album">Si Si</span>
+                <span class="player-album">On My Job</span>
             </div>
 
             <div class="player-controls">
